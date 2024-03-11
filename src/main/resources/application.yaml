@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+
+
+spring.datasource.url: jdbc:h2:file:./camunda-h2-database
+
+camunda.bpm.admin-user:
+  id: demo
+  password: demo
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.example: DEBUG
