@@ -57,7 +57,8 @@ public class ProductDelegate implements JavaDelegate {
 
         OrderReserveDto productServiceResponse = null;
         try {
-            productServiceResponse = restTemplate.postForEntity(NEW_ORDER_URL, entity, OrderReserveDto.class).getBody();
+            OrderReserveDto body = restTemplate.postForEntity(NEW_ORDER_URL, entity, OrderReserveDto.class).getBody();
+            productServiceResponse = body;
             delegateExecution.setVariable("Required-Payment-Info", productServiceResponse);
             OrderReserveDto requiredPaymentInfo = (OrderReserveDto) delegateExecution.getVariable("Required-Payment-Info");
             log.debug("DTO FROM PRODUCT SVC: " + requiredPaymentInfo);
