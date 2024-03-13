@@ -8,7 +8,9 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 public class CancelAfterPaymentSvcFailed implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        System.out.println("  ====================\n   TODO: ROLLBACK AFTER FAILING PAYMENT-SERVICE \n  ====================");
+        System.out.println("  -----------------------------\n   TODO: ROLLBACK AFTER FAILING PAYMENT-SERVICE \n  -----------------------------");
+
+        // TODO: Rollback product svc transaction
 
     }
 }

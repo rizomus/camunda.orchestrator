@@ -3,6 +3,7 @@ package com.example.delegate;
 import com.example.dto.OrderDto;
 import com.example.dto.OrderReserveDto;
 import com.example.dto.PaymentDto;
+import com.example.entity.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -15,6 +16,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.http.HttpRequest;
+
+import static com.example.entity.util.Util.changeOrderStatus;
 
 @Slf4j
 @Component
@@ -51,6 +54,7 @@ public class PaymentDelegate implements JavaDelegate {
         PaymentDto paymentResult = null;
         try {
             paymentResult = restTemplate.postForEntity(NEW_PAYMENT_URL, entity, PaymentDto.class).getBody();
+            changeOrderStatus(ORDER_ID, OrderStatus.PAID_UP);
         } catch (HttpClientErrorException e) {
             // 404 NOTFOUND
             // 400 BAD_REQUEST ( insufficient found )

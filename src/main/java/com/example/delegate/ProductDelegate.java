@@ -5,6 +5,7 @@ import com.example.dto.OrderDto;
 import com.example.dto.OrderReserveDto;
 import com.example.dto.Product;
 import com.example.dto.ProductReserveDto;
+import com.example.entity.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -20,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.example.entity.util.Util.changeOrderStatus;
 
 @Component
 @RequiredArgsConstructor
@@ -61,6 +64,7 @@ public class ProductDelegate implements JavaDelegate {
             productServiceResponse = body;
             delegateExecution.setVariable("Required-Payment-Info", productServiceResponse);
             OrderReserveDto requiredPaymentInfo = (OrderReserveDto) delegateExecution.getVariable("Required-Payment-Info");
+            changeOrderStatus(ORDER_ID, OrderStatus.RESERVED);
             log.debug("DTO FROM PRODUCT SVC: " + requiredPaymentInfo);
 
         } catch (HttpClientErrorException e) {
