@@ -30,7 +30,7 @@ public class OrderDelegate implements JavaDelegate {
     final static RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution execution) throws Exception {
 
 //        DmnDataTypeTransformer typeTransformer =
 
@@ -38,13 +38,14 @@ public class OrderDelegate implements JavaDelegate {
 
         System.out.println("\n =========================== \n ORDER DELEGATE IS RUNNING \n ===========================");
 
-        OrderDto orderRequest = (OrderDto) delegateExecution.getVariable("order");
+        OrderDto orderRequest = (OrderDto) execution.getVariable("order");
         System.out.println("\n new order request: " + orderRequest + "\n");
 
         HttpEntity<OrderDto> entity = new HttpEntity<>(orderRequest);
         try {
             registeredOrder = restTemplate.postForEntity(NEW_ORDER_URL, entity, OrderDto.class).getBody();
-            delegateExecution.setVariable("ORDER_ID", registeredOrder.getOrderId());
+            log.debug("ORDER_ID: " + registeredOrder.getOrderId());
+            execution.setVariable("ORDER_ID", registeredOrder.getOrderId());
 
         } catch (ResourceAccessException e) {
             log.debug("ResourceAccessException");

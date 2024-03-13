@@ -10,6 +10,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+
 @Slf4j
 public class Util {
 
@@ -18,8 +20,12 @@ public class Util {
 
     public static void changeOrderStatus(long ORDER_ID, OrderStatus newStatus) {
 
-        OrderStatusDto orderStatusDto = new OrderStatusDto(ORDER_ID, newStatus);
-        HttpEntity<OrderStatusDto> entity = new HttpEntity<>(orderStatusDto);
+
+        HashMap<String, String> orderStatusDto = new HashMap<>();
+        orderStatusDto.put("id", String.valueOf(ORDER_ID));
+        orderStatusDto.put("newStatus", newStatus.name());
+
+        HttpEntity<HashMap> entity = new HttpEntity<>(orderStatusDto);
 
         try {
             restTemplate.postForEntity(SET_ORDER_STATUS_URL, entity, String.class);

@@ -20,7 +20,7 @@ public class CancelAfterOrderSvcFailed implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
-        System.out.println(" -----------------------------\n ROLLING BACK AFTER FAILING ORDER-SERVICE \n -----------------------------");
+        System.out.println(" ------------------------- ORDER error -----------------------------");
 
     }
 }

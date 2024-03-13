@@ -5,6 +5,7 @@ import com.example.dto.OrderDto;
 import com.example.dto.OrderReserveDto;
 import com.example.dto.Product;
 import com.example.dto.ProductReserveDto;
+import com.example.entity.CurrencyUnit;
 import com.example.entity.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,13 +37,18 @@ public class ProductDelegate implements JavaDelegate {
     final static RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution execution) throws Exception {
 
-        log.debug("Product delegate is active");
+        System.out.println("""  
+  
+  ===========================    
+  PRODUCT DELEGATE IS RUNNING    
+  ===========================
+                """);
 
-        long ORDER_ID = (long) delegateExecution.getVariable("ORDER_ID");
+        long ORDER_ID = (long) execution.getVariable("ORDER_ID");
 
-        OrderDto order = (OrderDto) delegateExecution.getVariable("order");
+        OrderDto order = (OrderDto) execution.getVariable("order");
         Map<Long, Integer> articles = order.getProductList().stream().collect(Collectors.toMap(Product::getArticle, Product::getAmount));
         log.debug("ORDER_ID: " + ORDER_ID);
         System.out.println(articles);
@@ -58,12 +66,18 @@ public class ProductDelegate implements JavaDelegate {
 
         HttpEntity<ProductReserveDto[]> entity = new HttpEntity<>(productReserveDto);
 
-        OrderReserveDto productServiceResponse = null;
+        OrderReserveDto productServiceResponse = new OrderReserveDto();
         try {
-            OrderReserveDto body = restTemplate.postForEntity(NEW_ORDER_URL, entity, OrderReserveDto.class).getBody();
-            productServiceResponse = body;
-            delegateExecution.setVariable("Required-Payment-Info", productServiceResponse);
-            OrderReserveDto requiredPaymentInfo = (OrderReserveDto) delegateExecution.getVariable("Required-Payment-Info");
+            LinkedHashMap body = restTemplate.postForEntity(NEW_ORDER_URL, entity, LinkedHashMap.class).getBody();
+            System.out.println(body);
+
+            productServiceResponse.setOrderId(((Long.parseLong(body.get("orderId").toString()))));
+            productServiceResponse.setPaymentSum((new BigDecimal(body.get("paymentSum").toString())));
+            productServiceResponse.setCurrencyUnit(CurrencyUnit.valueOf(body.get("currencyUnit").toString()));
+
+
+            execution.setVariable("Required-Payment-Info", productServiceResponse);
+            OrderReserveDto requiredPaymentInfo = (OrderReserveDto) execution.getVariable("Required-Payment-Info");
             changeOrderStatus(ORDER_ID, OrderStatus.RESERVED);
             log.debug("DTO FROM PRODUCT SVC: " + requiredPaymentInfo);
 

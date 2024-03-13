@@ -43,8 +43,8 @@ public class PaymentDelegate implements JavaDelegate {
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
 
         PaymentDto paymentRequest = PaymentDto.builder()
-                .amount(requiredPaymentInfo.paymentSum())
-                .currencyUnit(requiredPaymentInfo.currencyUnit().toString())
+                .amount(requiredPaymentInfo.getPaymentSum())
+                .currencyUnit(requiredPaymentInfo.getCurrencyUnit().toString())
                 .orderId(ORDER_ID)
                 .payerId(ownerId)
                 .receiver("Top-Shop")

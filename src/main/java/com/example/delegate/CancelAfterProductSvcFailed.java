@@ -14,9 +14,9 @@ public class CancelAfterProductSvcFailed implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
-        System.out.println("------------------------------------------\n" +
-                           " ROLLBACK AFTER FAILING PRODUCT-SERVICE "     +
-                         "\n------------------------------------------");
+        System.out.println(" -------------------------  PRODUCT error  -----------------------------");
+        System.out.println(" ------------------  Try to set status CANCELED  -----------------------");
+
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
         changeOrderStatus(ORDER_ID, OrderStatus.CANCELED);
