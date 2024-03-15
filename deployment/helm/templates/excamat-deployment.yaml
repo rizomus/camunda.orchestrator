@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: excamad
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: excamad-label
+
+  template:
+    metadata:
+      labels:
+        app: excamad-label
+    spec:
+      containers:
+        - name: payment
+          image: kotovdenis/excamad
+          ports:
+            - containerPort: 8080
+              name: web
+
+

@@ -7,46 +7,48 @@ import com.example.dto.Product;
 import com.example.dto.ProductReserveDto;
 import com.example.entity.CurrencyUnit;
 import com.example.entity.OrderStatus;
+import com.example.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.example.entity.util.Util.changeOrderStatus;
+import static com.example.util.Util.changeOrderStatus;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ProductDelegate implements JavaDelegate {
 
-    final static String NEW_ORDER_URL = "http://localhost:8012/product/reserve";
-
-    final static RestTemplate restTemplate = new RestTemplate();
+    @Value("${product.uri}/reserve")
+    String NEW_ORDER_URL;
+    private final  RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
         System.out.println("""  
   
-  ===========================    
-  PRODUCT DELEGATE IS RUNNING    
-  ===========================
+    ===========================    
+    PRODUCT DELEGATE IS RUNNING    
+    ===========================
                 """);
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
+        log.debug("NEW_ORDER_URL: " + NEW_ORDER_URL);
 
         OrderDto order = (OrderDto) execution.getVariable("order");
         Map<Long, Integer> articles = order.getProductList().stream().collect(Collectors.toMap(Product::getArticle, Product::getAmount));
@@ -91,6 +93,7 @@ public class ProductDelegate implements JavaDelegate {
 
         } catch (RestClientException e) {
             log.debug("Rest Client Exception");
+            log.debug(e.getMessage());
             throw new BpmnError("productErrorCode");
         }
 

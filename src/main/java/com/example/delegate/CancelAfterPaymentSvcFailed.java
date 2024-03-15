@@ -1,24 +1,34 @@
 package com.example.delegate;
 
 import com.example.dto.OrderDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class CancelAfterPaymentSvcFailed implements JavaDelegate {
 
-    final static String UNRESERVE_PRODUCT_URL = "http://localhost:8012/product/unreserve?order_id={order_id}";
-    final static RestTemplate restTemplate = new RestTemplate();
+    @Value("${product.uri}/unreserve?order_id={order_id}")
+    String UNRESERVE_PRODUCT_URL;
+
+    private final static RestTemplate restTemplate = new RestTemplate();
+
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         System.out.println(" ------------------------- PAYMENT error  -----------------------------");
         System.out.println(" ------------------- Try to unreserve products  -----------------------");
+        System.out.println("URL: " + UNRESERVE_PRODUCT_URL);
+        System.out.println();
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
 

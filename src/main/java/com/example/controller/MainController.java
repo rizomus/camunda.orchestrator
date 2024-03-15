@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/gateway")
 @RequiredArgsConstructor
 @Slf4j
 public class MainController {
@@ -21,6 +22,7 @@ public class MainController {
     private final ProcessService processService;
 
     private final RuntimeService runtimeService;            // TODO: move to service
+
 
     @RequestMapping("/new-order")
     public String startProcess (@RequestBody OrderDto orderDto) {

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestrator-svc
+spec:
+  selector:
+    app: orchestrator-label            #должно соответствовать лейблу пода
+  ports:
+    - protocol: TCP
+      name: web
+      port: 8099        #порт сервиса
+      targetPort: 8099    #порт пода (порт, который открыт у контейнера)
+
+  type: ClusterIP
+  clusterIP: None

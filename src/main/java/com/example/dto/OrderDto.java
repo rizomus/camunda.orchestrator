@@ -13,10 +13,9 @@ public class OrderDto {
         long orderId;
         long ownerId;
         String ownerName;
-//        @JsonFormat(shape = JsonFormat.Shape.ARRAY)
         List<Product> productList;
         boolean prepayment;
-//        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        String marketplace;
         LocalDateTime date;
         OrderStatus status;
 }

@@ -2,6 +2,7 @@ package com.example.config;
 
 import jakarta.servlet.Filter;
 import org.camunda.bpm.engine.rest.security.auth.ProcessEngineAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

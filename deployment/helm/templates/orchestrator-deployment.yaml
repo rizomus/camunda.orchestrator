@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orchestrator-label
+
+  template:
+    metadata:
+      labels:
+        app: orchestrator-label
+    spec:
+      containers:
+        - name: orchestrator
+          image: rizomus/camunda-orchestrator
+          ports:
+            - containerPort: 8099
+              name: web
+
+

@@ -7,6 +7,7 @@ import org.camunda.bpm.dmn.engine.impl.spi.type.DmnDataTypeTransformer;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -26,8 +27,10 @@ import java.util.Random;
 @Slf4j
 public class OrderDelegate implements JavaDelegate {
 
-    final static String NEW_ORDER_URL = "http://localhost:8011/order/new";
-    final static RestTemplate restTemplate = new RestTemplate();
+    @Value("${order.uri}/new")
+    String NEW_ORDER_URL;
+    private final static RestTemplate restTemplate = new RestTemplate();
+
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -36,7 +39,10 @@ public class OrderDelegate implements JavaDelegate {
 
         OrderDto registeredOrder = null;
 
-        System.out.println("\n =========================== \n ORDER DELEGATE IS RUNNING \n ===========================");
+        System.out.println("\n =========================== \n ORDER DELEGATE IS RUNNING \n ===========================\n");
+
+        log.debug("NEW_ORDER_URL: " + NEW_ORDER_URL);
+
 
         OrderDto orderRequest = (OrderDto) execution.getVariable("order");
         System.out.println("\n new order request: " + orderRequest + "\n");

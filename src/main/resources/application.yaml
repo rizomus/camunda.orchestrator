@@ -1,7 +1,9 @@
 server:
-  port: 8080
+  port: 8099
 
-
+order.uri: http://order-svc:8011/order
+product.uri: http://product-svc:8012/product
+payment.uri:  http://payment-svc:8013/payment
 
 spring.datasource.url: jdbc:h2:file:./camunda-h2-database
 
