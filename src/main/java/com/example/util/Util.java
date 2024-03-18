@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -21,13 +23,16 @@ import java.util.HashMap;
 @Component
 @RequiredArgsConstructor
 public class Util {
-
+    
     private static final  RestTemplate restTemplate = new RestTemplate();
+    private static String SET_ORDER_STATUS_URL;
+
+    public static void SetOrderStatusUrl(String setOrderStatusUrl) {
+        SET_ORDER_STATUS_URL = setOrderStatusUrl;
+    }
 
     public static void changeOrderStatus(long ORDER_ID, OrderStatus newStatus) {
 
-        String SET_ORDER_STATUS_URL = "http://order-svc:8011/order/set-order-status";       // TODO: take from properties
-//        String SET_ORDER_STATUS_URL = "http://localhost:8011/order/set-order-status";       // TODO: take from properties
         HashMap<String, String> orderStatusDto = new HashMap<>();
         orderStatusDto.put("id", String.valueOf(ORDER_ID));
         orderStatusDto.put("newStatus", newStatus.name());

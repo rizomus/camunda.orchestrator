@@ -35,25 +35,22 @@ public class ProductDelegate implements JavaDelegate {
 
     @Value("${product.uri}/reserve")
     String NEW_ORDER_URL;
-    private final  RestTemplate restTemplate = new RestTemplate();
+    private final static RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
         System.out.println("""  
   
-    ===========================    
-    PRODUCT DELEGATE IS RUNNING    
-    ===========================
+  =============================
+   PRODUCT DELEGATE IS RUNNING
+  =============================
                 """);
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
-        log.debug("NEW_ORDER_URL: " + NEW_ORDER_URL);
-
         OrderDto order = (OrderDto) execution.getVariable("order");
         Map<Long, Integer> articles = order.getProductList().stream().collect(Collectors.toMap(Product::getArticle, Product::getAmount));
         log.debug("ORDER_ID: " + ORDER_ID);
-        System.out.println(articles);
         ProductReserveDto[] productReserveDto = new ProductReserveDto[articles.size()];
 
         int i = 0;
@@ -71,24 +68,20 @@ public class ProductDelegate implements JavaDelegate {
         OrderReserveDto productServiceResponse = new OrderReserveDto();
         try {
             LinkedHashMap body = restTemplate.postForEntity(NEW_ORDER_URL, entity, LinkedHashMap.class).getBody();
-            System.out.println(body);
 
             productServiceResponse.setOrderId(((Long.parseLong(body.get("orderId").toString()))));
             productServiceResponse.setPaymentSum((new BigDecimal(body.get("paymentSum").toString())));
             productServiceResponse.setCurrencyUnit(CurrencyUnit.valueOf(body.get("currencyUnit").toString()));
 
-
             execution.setVariable("Required-Payment-Info", productServiceResponse);
             OrderReserveDto requiredPaymentInfo = (OrderReserveDto) execution.getVariable("Required-Payment-Info");
             changeOrderStatus(ORDER_ID, OrderStatus.RESERVED);
-            log.debug("DTO FROM PRODUCT SVC: " + requiredPaymentInfo);
+            log.debug("Order reserved. Required payment " + requiredPaymentInfo.getPaymentSum() + " " + requiredPaymentInfo.getCurrencyUnit().name());
 
         } catch (HttpClientErrorException e) {
             // 404 NOTFOUND
             // 406 CONFLICT ( optimistic lock ex || multiply currency unit )
-            log.debug(e.getStatusCode().toString());
             log.debug(e.getMessage());
-            log.debug(e.getResponseBodyAsString());
             throw new BpmnError("productErrorCode");
 
         } catch (RestClientException e) {

@@ -26,8 +26,7 @@ public class CancelByUserRequest  implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
-        System.out.println(" -------------------------  CANCEL error  -----------------------------");
-        System.out.println(" --------------------  Try to return payment  -------------------------");
+        System.out.println("\n -------------------------  CANCEL error  ----------------------------- \n");
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
 
@@ -36,5 +35,6 @@ public class CancelByUserRequest  implements JavaDelegate {
 
         restTemplate.execute(PAYMENT_CANCEL_URL, HttpMethod.POST, null, null, params);
 
+        System.out.println("Payment has returned");
     }
 }
