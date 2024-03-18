@@ -39,10 +39,9 @@ public class OrderDelegate implements JavaDelegate {
 
         OrderDto registeredOrder = null;
 
-        System.out.println("\n =========================== \n ORDER DELEGATE IS RUNNING \n ===========================\n");
+        System.out.println("\n =========================== \n  ORDER DELEGATE IS RUNNING \n ===========================\n");
 
         OrderDto orderRequest = (OrderDto) execution.getVariable("order");
-        System.out.println("\n new order request: " + orderRequest + "\n");
 
         HttpEntity<OrderDto> entity = new HttpEntity<>(orderRequest);
         try {
@@ -54,8 +53,8 @@ public class OrderDelegate implements JavaDelegate {
             log.debug("ResourceAccessException");
             throw new BpmnError("orderErrorCode");
         }
-        log.debug("NEW ORDER CREATED: " + registeredOrder);
-        log.debug("Order delegate is done");
+        log.debug("NEW ORDER_ID: " + registeredOrder.getOrderId());
+//        log.debug("Order delegate is done");
 
 
     }

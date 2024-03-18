@@ -60,7 +60,13 @@ public class PaymentDelegate implements JavaDelegate {
         } catch (HttpClientErrorException e) {
             // 404 NOTFOUND
             // 400 BAD_REQUEST ( insufficient found )
-            log.debug(e.getMessage());
+            if (e.getMessage().startsWith("404")) {
+                log.debug("Invalid payer ID");
+            } else if (e.getMessage().startsWith("400")) {
+                log.debug("Insufficient found");
+            } else {
+                log.debug(e.getMessage());
+            }
             throw new BpmnError("paymentErrorCode");
         } catch (RestClientException e) {
             log.debug("ResourceAccessException!!! \n" + e.getMessage());

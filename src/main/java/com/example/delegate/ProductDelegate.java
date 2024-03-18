@@ -41,11 +41,11 @@ public class ProductDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
 
         System.out.println("""  
-  
-  =============================
-   PRODUCT DELEGATE IS RUNNING
-  =============================
-                """);
+                                          
+                \u0020=============================
+                \u0020 PRODUCT DELEGATE IS RUNNING
+                \u00A0=============================
+                                                    """);
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
         OrderDto order = (OrderDto) execution.getVariable("order");
