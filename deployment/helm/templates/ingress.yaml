@@ -20,4 +20,10 @@ spec:
                 name: orchestrator-svc
                 port:
                   number: 8099      #должно соответствовать порту сервиса, который в свою очередь указывает на 9090 порт пода
-
+          - path: /engine-rest
+            pathType: Prefix
+            backend:
+              service:
+                name: orchestrator-svc
+                port:
+                  number: 8099

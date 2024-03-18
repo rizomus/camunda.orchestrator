@@ -25,10 +25,7 @@ public class CancelAfterPaymentSvcFailed implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        System.out.println(" ------------------------- PAYMENT error  -----------------------------");
-        System.out.println(" ------------------- Try to unreserve products  -----------------------");
-        System.out.println("URL: " + UNRESERVE_PRODUCT_URL);
-        System.out.println();
+        System.out.println("\n ------------------------- PAYMENT error  -----------------------------\n");
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
 
@@ -37,6 +34,7 @@ public class CancelAfterPaymentSvcFailed implements JavaDelegate {
 
         restTemplate.execute(UNRESERVE_PRODUCT_URL, HttpMethod.POST, null, null, params);
 
+        System.out.println("Products unreserved");
 
     }
 }

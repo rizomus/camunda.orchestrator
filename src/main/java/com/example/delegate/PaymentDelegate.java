@@ -31,24 +31,25 @@ public class PaymentDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
-        System.out.println("\n  ===========================    \n" +
-                             "  PAYMENT DELEGATE IS RUNNING    \n" +
-                             "  ===========================    \n");
+        System.out.println("\n =============================    \n" +
+                             "  PAYMENT DELEGATE IS RUNNING     \n" +
+                             " =============================    \n");
 
         OrderReserveDto requiredPaymentInfo = (OrderReserveDto) execution.getVariable("Required-Payment-Info");
 
-        log.debug("Required-Payment-Info: " + requiredPaymentInfo);
+        log.debug("Required Payment: " + requiredPaymentInfo.getPaymentSum() + " " + requiredPaymentInfo.getCurrencyUnit());
 
         OrderDto order = (OrderDto) execution.getVariable("order");
         long ownerId = order.getOwnerId();
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
+        String marketplace = order.getMarketplace();
 
         PaymentDto paymentRequest = PaymentDto.builder()
                 .amount(requiredPaymentInfo.getPaymentSum())
                 .currencyUnit(requiredPaymentInfo.getCurrencyUnit().toString())
                 .orderId(ORDER_ID)
                 .payerId(ownerId)
-                .receiver("Top-Shop")
+                .receiver(marketplace)
                 .build();
 
         HttpEntity<PaymentDto> entity = new HttpEntity<>(paymentRequest);
@@ -59,13 +60,11 @@ public class PaymentDelegate implements JavaDelegate {
         } catch (HttpClientErrorException e) {
             // 404 NOTFOUND
             // 400 BAD_REQUEST ( insufficient found )
-            log.debug(e.getStatusCode().toString());
             log.debug(e.getMessage());
-            log.debug(e.getResponseBodyAsString());
             throw new BpmnError("paymentErrorCode");
         } catch (RestClientException e) {
             log.debug("ResourceAccessException!!! \n" + e.getMessage());
         }
-        log.debug("PAYMENT RESULT: " + paymentResult);
+        log.debug("PAYMENT RESULT: successful = " + paymentResult.successful());
     }
 }

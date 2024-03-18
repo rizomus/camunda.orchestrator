@@ -22,12 +22,12 @@ public class CancelAfterProductSvcFailed implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
 
-        System.out.println(" -------------------------  PRODUCT error  -----------------------------");
-        System.out.println(" ------------------  Try to set status CANCELED  -----------------------");
-
+        System.out.println("\n -------------------------  PRODUCT service error  -----------------------------");
 
         long ORDER_ID = (long) execution.getVariable("ORDER_ID");
         changeOrderStatus(ORDER_ID, OrderStatus.CANCELED);
+
+        System.out.println("Order status -> CANCELED \n");
     }
 
 }

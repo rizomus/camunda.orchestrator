@@ -41,9 +41,6 @@ public class OrderDelegate implements JavaDelegate {
 
         System.out.println("\n =========================== \n ORDER DELEGATE IS RUNNING \n ===========================\n");
 
-        log.debug("NEW_ORDER_URL: " + NEW_ORDER_URL);
-
-
         OrderDto orderRequest = (OrderDto) execution.getVariable("order");
         System.out.println("\n new order request: " + orderRequest + "\n");
 

@@ -1,0 +1,4 @@
+
+order.uri: http://localhost:8011/order
+product.uri: http://localhost:8012/product
+payment.uri:  http://localhost:8013/payment
