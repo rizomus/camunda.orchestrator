@@ -15,33 +15,7 @@
       <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
       <bpmn:outgoing>Flow_1dy0ekk</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="order-error-id" camunda:asyncBefore="true" attachedToRef="put-order-id">
-      <bpmn:outgoing>Flow_1p6fwi5</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_129frhq" errorRef="Error_1o09ivi" />
-    </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="cancel-order-id" name="Cancel" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelAfterOrderSvcFailed">
-      <bpmn:incoming>Flow_1p6fwi5</bpmn:incoming>
-      <bpmn:outgoing>Flow_1idx662</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1p6fwi5" sourceRef="order-error-id" targetRef="cancel-order-id" />
-    <bpmn:endEvent id="Event_1fu0v8f">
-      <bpmn:incoming>Flow_1idx662</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1idx662" sourceRef="cancel-order-id" targetRef="Event_1fu0v8f" />
-    <bpmn:boundaryEvent id="product-error-id" camunda:asyncBefore="true" attachedToRef="get-order-id">
-      <bpmn:outgoing>Flow_03ybn5h</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mt29bg" errorRef="Error_0caeh1z" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_03ybn5h" sourceRef="product-error-id" targetRef="cancel-status-id" />
-    <bpmn:serviceTask id="cancel-status-id" name="Order Status = CANCELED" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelAfterProductSvcFailed">
-      <bpmn:incoming>Flow_03ybn5h</bpmn:incoming>
-      <bpmn:incoming>Flow_1gblkre</bpmn:incoming>
-      <bpmn:outgoing>Flow_1fxhtcm</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_0nltapt">
-      <bpmn:incoming>Flow_1fxhtcm</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1fxhtcm" sourceRef="cancel-status-id" targetRef="Event_0nltapt" />
+    <bpmn:serviceTask id="cancel-status-id" name="Order Status = CANCELED" isForCompensation="true" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelAfterProductSvcFailed" />
     <bpmn:endEvent id="Event_1brbg92">
       <bpmn:incoming>Flow_1gq9n8s</bpmn:incoming>
     </bpmn:endEvent>
@@ -50,17 +24,7 @@
       <bpmn:incoming>Flow_1dy0ekk</bpmn:incoming>
       <bpmn:outgoing>Flow_1jt5e9k</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_0848tbq" attachedToRef="pay-order-id">
-      <bpmn:outgoing>Flow_09g15il</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_1ei7gij" errorRef="Error_1oj34mm" camunda:errorCodeVariable="paymentError" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_09g15il" sourceRef="Event_0848tbq" targetRef="cancel-reserve-id" />
-    <bpmn:serviceTask id="cancel-reserve-id" name="Rollback Reserve" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelAfterPaymentSvcFailed">
-      <bpmn:incoming>Flow_09g15il</bpmn:incoming>
-      <bpmn:incoming>Flow_199joxg</bpmn:incoming>
-      <bpmn:outgoing>Flow_1gblkre</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1gblkre" sourceRef="cancel-reserve-id" targetRef="cancel-status-id" />
+    <bpmn:serviceTask id="cancel-reserve-id" name="Rollback Reserve" isForCompensation="true" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelAfterPaymentSvcFailed" />
     <bpmn:sequenceFlow id="Flow_02k5yoj" sourceRef="form-package-id" targetRef="check-cancel-id" />
     <bpmn:sequenceFlow id="Flow_1gq9n8s" sourceRef="deliver-id" targetRef="Event_1brbg92" />
     <bpmn:sequenceFlow id="Flow_0r41kla" sourceRef="StartEvent_1" targetRef="put-order-id" />
@@ -70,11 +34,6 @@
       <bpmn:outgoing>Flow_09olda0</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_09olda0" sourceRef="check-cancel-id" targetRef="deliver-id" />
-    <bpmn:boundaryEvent id="Event_1mhjtp7" attachedToRef="check-cancel-id">
-      <bpmn:outgoing>Flow_1s2826u</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_09lzdw2" errorRef="Error_0kvjpy5" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1s2826u" sourceRef="Event_1mhjtp7" targetRef="cancel-payment-id" />
     <bpmn:userTask id="form-package-id" name="Form package" camunda:asyncBefore="true">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -88,11 +47,40 @@
       <bpmn:incoming>Flow_09olda0</bpmn:incoming>
       <bpmn:outgoing>Flow_1gq9n8s</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_199joxg" sourceRef="cancel-payment-id" targetRef="cancel-reserve-id" />
-    <bpmn:serviceTask id="cancel-payment-id" name="Rollback payment" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelByUserRequest">
-      <bpmn:incoming>Flow_1s2826u</bpmn:incoming>
-      <bpmn:outgoing>Flow_199joxg</bpmn:outgoing>
-    </bpmn:serviceTask>
+    <bpmn:serviceTask id="cancel-payment-id" name="Rollback payment" isForCompensation="true" camunda:asyncBefore="true" camunda:class="com.example.delegate.CancelByUserRequest" />
+    <bpmn:subProcess id="Activity_0algtx3" triggeredByEvent="true">
+      <bpmn:startEvent id="Error-start-event-id" camunda:asyncBefore="true">
+        <bpmn:outgoing>Flow_0sl92b6</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0baqvyc" errorRef="Error_1ex96pw" />
+      </bpmn:startEvent>
+      <bpmn:intermediateThrowEvent id="Event_1b5q184" camunda:asyncBefore="true">
+        <bpmn:incoming>Flow_0sl92b6</bpmn:incoming>
+        <bpmn:outgoing>Flow_125mtyu</bpmn:outgoing>
+        <bpmn:compensateEventDefinition id="CompensateEventDefinition_0uavtih" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:sequenceFlow id="Flow_0sl92b6" sourceRef="Error-start-event-id" targetRef="Event_1b5q184" />
+      <bpmn:endEvent id="Event_1gu3snh">
+        <bpmn:incoming>Flow_0ii5vu2</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_125mtyu" sourceRef="Event_1b5q184" targetRef="Activity_0hufmz0" />
+      <bpmn:serviceTask id="Activity_0hufmz0" name="Logging" camunda:asyncBefore="true" camunda:class="com.example.delegate.RollbackDelegate">
+        <bpmn:incoming>Flow_125mtyu</bpmn:incoming>
+        <bpmn:outgoing>Flow_0ii5vu2</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_0ii5vu2" sourceRef="Activity_0hufmz0" targetRef="Event_1gu3snh" />
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="order-error-id" camunda:asyncBefore="true" attachedToRef="put-order-id">
+      <bpmn:compensateEventDefinition id="CompensateEventDefinition_1s5wh3d" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="product-error-id" camunda:asyncBefore="true" attachedToRef="get-order-id">
+      <bpmn:compensateEventDefinition id="CompensateEventDefinition_00qxy63" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0848tbq" camunda:asyncBefore="true" attachedToRef="pay-order-id">
+      <bpmn:compensateEventDefinition id="CompensateEventDefinition_1n7jest" />
+    </bpmn:boundaryEvent>
+    <bpmn:association id="Association_0c2f1s1" associationDirection="One" sourceRef="Event_0848tbq" targetRef="cancel-payment-id" />
+    <bpmn:association id="Association_1xyq2op" associationDirection="One" sourceRef="product-error-id" targetRef="cancel-reserve-id" />
+    <bpmn:association id="Association_174j9xd" associationDirection="One" sourceRef="order-error-id" targetRef="cancel-status-id" />
   </bpmn:process>
   <bpmn:error id="Error_0rub6su" name="RuntimeError" />
   <bpmn:error id="Error_1o09ivi" name="orderError" errorCode="orderErrorCode" />
@@ -101,6 +89,8 @@
   <bpmn:message id="Message_1vcq5bc" name="Message_1vcq5bc" />
   <bpmn:error id="Error_0kvjpy5" name="canselByUserError" errorCode="cancelByUserErrorCode" />
   <bpmn:signal id="Signal_05uii6j" name="cancelOrder" />
+  <bpmn:error id="Error_07wvjju" name="Error_3do1n36" errorCode="delegateCancelableError" />
+  <bpmn:error id="Error_1ex96pw" name="DelegateCancelableError" errorCode="DelegateCancelableErrorCode" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ORCHESTRATOR_PROCESS">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
@@ -114,29 +104,8 @@
         <dc:Bounds x="460" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ud58ex_di" bpmnElement="cancel-order-id">
-        <dc:Bounds x="290" y="250" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1fu0v8f_di" bpmnElement="Event_1fu0v8f">
-        <dc:Bounds x="322" y="402" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1e9a80q_di" bpmnElement="cancel-status-id">
-        <dc:Bounds x="460" y="250" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0nltapt_di" bpmnElement="Event_0nltapt">
-        <dc:Bounds x="492" y="402" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1brbg92_di" bpmnElement="Event_1brbg92">
-        <dc:Bounds x="1482" y="99" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_09fkm1d_di" bpmnElement="pay-order-id">
         <dc:Bounds x="650" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1405bzg_di" bpmnElement="cancel-reserve-id">
-        <dc:Bounds x="650" y="250" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1mnctio_di" bpmnElement="check-cancel-id">
         <dc:Bounds x="980" y="77" width="100" height="80" />
@@ -149,20 +118,68 @@
         <dc:Bounds x="1150" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1brbg92_di" bpmnElement="Event_1brbg92">
+        <dc:Bounds x="1322" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1e9a80q_di" bpmnElement="cancel-status-id">
+        <dc:Bounds x="290" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ss0jnu_di" bpmnElement="cancel-payment-id">
-        <dc:Bounds x="980" y="240" width="100" height="80" />
+        <dc:Bounds x="650" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1wpe58x_di" bpmnElement="Event_1mhjtp7">
-        <dc:Bounds x="1012" y="139" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_1405bzg_di" bpmnElement="cancel-reserve-id">
+        <dc:Bounds x="460" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1h4cbzu_di" bpmnElement="Event_0848tbq">
-        <dc:Bounds x="682" y="139" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_0h8bzf2_di" bpmnElement="Activity_0algtx3" isExpanded="true">
+        <dc:Bounds x="400" y="510" width="760" height="200" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_07n8jdt" bpmnElement="product-error-id">
+      <bpmndi:BPMNShape id="BPMNShape_155sx4d" bpmnElement="Error-start-event-id">
+        <dc:Bounds x="432" y="592" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gz2g2i_di" bpmnElement="Event_1b5q184">
+        <dc:Bounds x="622" y="592" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gu3snh_di" bpmnElement="Event_1gu3snh">
+        <dc:Bounds x="1022" y="592" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wiw885_di" bpmnElement="Activity_0hufmz0">
+        <dc:Bounds x="810" y="570" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0sl92b6_di" bpmnElement="Flow_0sl92b6">
+        <di:waypoint x="468" y="610" />
+        <di:waypoint x="622" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_125mtyu_di" bpmnElement="Flow_125mtyu">
+        <di:waypoint x="658" y="610" />
+        <di:waypoint x="810" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ii5vu2_di" bpmnElement="Flow_0ii5vu2">
+        <di:waypoint x="910" y="610" />
+        <di:waypoint x="1022" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0c2f1s1_di" bpmnElement="Association_0c2f1s1">
+        <di:waypoint x="700" y="175" />
+        <di:waypoint x="700" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1xyq2op_di" bpmnElement="Association_1xyq2op">
+        <di:waypoint x="510" y="175" />
+        <di:waypoint x="510" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_174j9xd_di" bpmnElement="Association_174j9xd">
+        <di:waypoint x="340" y="175" />
+        <di:waypoint x="340" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1le8jdc_di" bpmnElement="order-error-id">
+        <dc:Bounds x="322" y="139" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_159jsii_di" bpmnElement="product-error-id">
         <dc:Bounds x="492" y="139" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1f4jz88_di" bpmnElement="order-error-id">
-        <dc:Bounds x="322" y="139" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0lqdjzf_di" bpmnElement="Event_0848tbq">
+        <dc:Bounds x="682" y="139" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_16gzt2m_di" bpmnElement="SequenceFlow_16gzt2m">
         <di:waypoint x="390" y="117" />
@@ -172,33 +189,9 @@
         <di:waypoint x="560" y="117" />
         <di:waypoint x="650" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1p6fwi5_di" bpmnElement="Flow_1p6fwi5">
-        <di:waypoint x="340" y="175" />
-        <di:waypoint x="340" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1idx662_di" bpmnElement="Flow_1idx662">
-        <di:waypoint x="340" y="330" />
-        <di:waypoint x="340" y="402" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03ybn5h_di" bpmnElement="Flow_03ybn5h">
-        <di:waypoint x="510" y="175" />
-        <di:waypoint x="510" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1fxhtcm_di" bpmnElement="Flow_1fxhtcm">
-        <di:waypoint x="510" y="330" />
-        <di:waypoint x="510" y="402" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jt5e9k_di" bpmnElement="Flow_1jt5e9k">
         <di:waypoint x="750" y="117" />
         <di:waypoint x="810" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_09g15il_di" bpmnElement="Flow_09g15il">
-        <di:waypoint x="700" y="175" />
-        <di:waypoint x="700" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gblkre_di" bpmnElement="Flow_1gblkre">
-        <di:waypoint x="650" y="290" />
-        <di:waypoint x="560" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02k5yoj_di" bpmnElement="Flow_02k5yoj">
         <di:waypoint x="910" y="117" />
@@ -206,7 +199,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gq9n8s_di" bpmnElement="Flow_1gq9n8s">
         <di:waypoint x="1250" y="117" />
-        <di:waypoint x="1482" y="117" />
+        <di:waypoint x="1322" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0r41kla_di" bpmnElement="Flow_0r41kla">
         <di:waypoint x="218" y="117" />
@@ -215,14 +208,6 @@
       <bpmndi:BPMNEdge id="Flow_09olda0_di" bpmnElement="Flow_09olda0">
         <di:waypoint x="1080" y="117" />
         <di:waypoint x="1150" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1s2826u_di" bpmnElement="Flow_1s2826u">
-        <di:waypoint x="1030" y="175" />
-        <di:waypoint x="1030" y="240" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_199joxg_di" bpmnElement="Flow_199joxg">
-        <di:waypoint x="980" y="290" />
-        <di:waypoint x="750" y="290" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

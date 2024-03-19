@@ -82,12 +82,12 @@ public class ProductDelegate implements JavaDelegate {
             // 404 NOTFOUND
             // 406 CONFLICT ( optimistic lock ex || multiply currency unit )
             log.debug(e.getMessage());
-            throw new BpmnError("productErrorCode");
+            throw new BpmnError("DelegateCancelableErrorCode");
 
         } catch (RestClientException e) {
             log.debug("Rest Client Exception");
             log.debug(e.getMessage());
-            throw new BpmnError("productErrorCode");
+            throw new BpmnError("DelegateCancelableErrorCode");
         }
 
     }

@@ -12,7 +12,7 @@ public class CancelDelegate implements JavaDelegate {
         boolean ORDER_CANCELED = (boolean) execution.getVariable("ORDER_CANCELED");
 
         if (ORDER_CANCELED) {
-            throw new BpmnError("cancelByUserErrorCode");
+            throw new BpmnError("DelegateCancelableErrorCode");
         };
 
 

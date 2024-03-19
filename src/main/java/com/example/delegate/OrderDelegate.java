@@ -51,11 +51,9 @@ public class OrderDelegate implements JavaDelegate {
 
         } catch (ResourceAccessException e) {
             log.debug("ResourceAccessException");
-            throw new BpmnError("orderErrorCode");
+            throw new BpmnError("DelegateCancelableErrorCode");
         }
         log.debug("NEW ORDER_ID: " + registeredOrder.getOrderId());
-//        log.debug("Order delegate is done");
-
 
     }
 }

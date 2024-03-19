@@ -67,7 +67,7 @@ public class PaymentDelegate implements JavaDelegate {
             } else {
                 log.debug(e.getMessage());
             }
-            throw new BpmnError("paymentErrorCode");
+            throw new BpmnError("DelegateCancelableErrorCode");
         } catch (RestClientException e) {
             log.debug("ResourceAccessException!!! \n" + e.getMessage());
         }
